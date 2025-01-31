@@ -23,4 +23,5 @@ class OrderModel(BaseModel):
     pizza_size: Optional[str]='SMALL'
     user_id : Optional[int]
     
-
+class OrderStatusModel(BaseModel):
+    order_status: Optional[str] = 'PENDING'
