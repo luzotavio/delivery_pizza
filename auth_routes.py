@@ -17,6 +17,17 @@ T_Session = Annotated[Session, Depends(get_db)]
 
 @auth_router.post('/signup', response_model=SignUpModel)
 async def signup(user: SignUpModel, session: T_Session):
+    """  
+        ## Creating a new user account
+        This endpoint creates a new user account and requires the following fields:
+        - username: str
+        - email: str
+        - password: str
+        - is_active: bool
+        - is_staff: bool
+
+        If the email or username already exists in the database, an HTTP 400 error is
+    """
     user_db = session.scalar(select(User).where((User.email == user.email) | (User.username == user.username)))
     
     if user_db:
@@ -44,6 +55,14 @@ async def signup(user: SignUpModel, session: T_Session):
 async def login_for_access_token(
     session: T_Session, form_data: OAuth2PasswordRequestForm = Depends()
 ):
+    """ 
+        ## Authenticating a user and providing an access token
+        This endpoint authenticates a user and provides an access token. The following fields are required:
+        - username: str
+        - password: str (this should be provided in the form data)
+
+        If the username or password is incorrect, an HTTP 400 error is returned.
+    """
     user = session.scalar(select(User).where(User.username == form_data.username))
 
     if not user or not verify_password(form_data.password, user.password):
@@ -59,6 +78,14 @@ async def login_for_access_token(
 async def refresh_access_token(
     user: User = Depends(get_current_user),
 ):
+    
+    """ 
+        ## Refreshing an access token
+        This endpoint refreshes an access token and requires the following:
+        - The user must be authenticated (this is handled by the `get_current_user` dependency)
+
+        The new access token is generated and
+    """
     new_access_token = create_access_token(data={'sub': user.username})
 
     return {'access_token': new_access_token, 'token_type': 'bearer'}

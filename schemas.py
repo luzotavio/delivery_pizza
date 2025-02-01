@@ -17,11 +17,18 @@ class Token(BaseModel):
     token_type: str
     
 class OrderModel(BaseModel):
-    id: Optional[int]
     quantity: int
     order_status: Optional[str]='PENDING'
     pizza_size: Optional[str]='SMALL'
-    user_id : Optional[int]
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "quantity": 1,
+                "order_status": "PENDING",
+                "pizza_size": "SMALL",
+            }
+    }
     
 class OrderStatusModel(BaseModel):
     order_status: Optional[str] = 'PENDING'
